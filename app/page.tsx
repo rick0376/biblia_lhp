@@ -19,7 +19,7 @@ export default async function Home() {
             <span className={styles.badge}>✨ ACF • LHPSYSTEMS</span>
           </div>
 
-          <h1 className={styles.title}>Bíblia Sagrada</h1>
+          <h1 className={styles.title}>Bíblia Sagrada - LHP</h1>
 
           <div className={styles.ornament} />
 
