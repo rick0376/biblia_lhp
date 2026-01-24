@@ -3,6 +3,12 @@ import { prisma } from "../../../lib/prisma";
 import styles from "./styles.module.scss";
 import CapitulosClient from "../../components/CapitulosClient"; // se estiver usando
 
+type ChapterItem = {
+  id: number;
+  number: number;
+  _count: { verses: number };
+};
+
 export default async function LivroPage({
   params,
 }: {
@@ -24,7 +30,7 @@ export default async function LivroPage({
   if (!livro) return <h1>Livro não encontrado</h1>;
 
   // se você usa client component:
-  const chapters = livro.chapters.map((c) => ({
+  const chapters = (livro.chapters as ChapterItem[]).map((c) => ({
     id: c.id,
     number: c.number,
     versesCount: c._count.verses,
