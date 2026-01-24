@@ -51,6 +51,10 @@ export default async function Home() {
               Abrir livros →
             </Link>
 
+            <Link className={styles.primaryBtn} href="/harpa">
+              Hino Harpa →
+            </Link>
+
             <Link className={styles.secondaryBtn} href="/livros/apocalipse">
               Ir para Apocalipse
             </Link>

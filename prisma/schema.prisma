@@ -39,3 +39,24 @@ model Verse {
 
   @@unique([chapterId, number])
 }
+
+/* =========================
+   HARPA CRISTÃ
+========================= */
+model Hymn {
+  id      Int        @id @default(autoincrement())
+  number  Int        @unique
+  title   String
+  verses  HymnVerse[]
+}
+
+model HymnVerse {
+  id      Int    @id @default(autoincrement())
+  hymnId  Int
+  number  Int
+  text    String
+
+  hymn    Hymn   @relation(fields: [hymnId], references: [id], onDelete: Cascade)
+
+  @@unique([hymnId, number])
+}
