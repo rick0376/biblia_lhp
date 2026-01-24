@@ -31,18 +31,18 @@ export default async function Home() {
 
           <div className={styles.stats}>
             <div className={styles.stat}>
-              <div className={styles.statLabel}>Livros no banco</div>
+              <div className={styles.statLabel}>Livros bíblicos</div>
               <div className={styles.statValue}>{booksCount}</div>
             </div>
 
             <div className={styles.stat}>
-              <div className={styles.statLabel}>Modo</div>
-              <div className={styles.statValue}>Leitura</div>
+              <div className={styles.statLabel}>Autor</div>
+              <div className={styles.statValue}>Rick Pereira</div>
             </div>
 
             <div className={styles.stat}>
-              <div className={styles.statLabel}>Tema</div>
-              <div className={styles.statValue}>Dourado</div>
+              <div className={styles.statLabel}>Empresa</div>
+              <div className={styles.statValue}>LHPSYSTEMS</div>
             </div>
           </div>
 
