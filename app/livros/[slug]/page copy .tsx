@@ -13,7 +13,6 @@ export default async function LivroPage({
     where: { slug },
     include: {
       chapters: {
-        where: { verses: { some: {} } },
         include: { _count: { select: { verses: true } } },
         orderBy: { number: "asc" },
       },
