@@ -24,7 +24,7 @@ const livros = [
   { name: "Salmos", slug: "salmos", testament: "Antigo", order: 19 },
   { name: "Provérbios", slug: "proverbios", testament: "Antigo", order: 20 },
   { name: "Eclesiastes", slug: "eclesiastes", testament: "Antigo", order: 21 },
-  { name: "Cânticos", slug: "canticos", testament: "Antigo", order: 22 },
+  { name: "Cantares", slug: "cantares", testament: "Antigo", order: 22 },
   { name: "Isaías", slug: "isaias", testament: "Antigo", order: 23 },
   { name: "Jeremias", slug: "jeremias", testament: "Antigo", order: 24 },
   { name: "Lamentações", slug: "lamentacoes", testament: "Antigo", order: 25 },

@@ -21,7 +21,7 @@ const mapaLivros: Record<string, string> = {
   salmos: "sl",
   proverbios: "pv",
   eclesiastes: "ec",
-  canticos: "ct",
+  cantares: "ct",
   isaias: "is",
   jeremias: "jr",
   lamentacoes: "lm",

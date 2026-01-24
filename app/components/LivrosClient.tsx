@@ -2,16 +2,23 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import styles from "../livros/styles.module.scss";
 
-type Livro = { id: number; name: string; slug: string };
+type Livro = {
+  id: number;
+  name: string;
+  slug: string;
+  testament: string;
+  chaptersCount: number;
+};
 
-export default function LivrosClient({
-  livros,
-  styles,
-}: {
-  livros: Livro[];
-  styles: Record<string, string>;
-}) {
+function normalizarTestamento(t: string) {
+  const s = (t || "").toLowerCase();
+  if (s.includes("novo")) return "Novo";
+  return "Antigo";
+}
+
+export default function LivrosClient({ livros }: { livros: Livro[] }) {
   const [q, setQ] = useState("");
 
   const filtrados = useMemo(() => {
@@ -23,6 +30,17 @@ export default function LivrosClient({
     );
   }, [q, livros]);
 
+  const antigo = useMemo(
+    () =>
+      filtrados.filter((l) => normalizarTestamento(l.testament) === "Antigo"),
+    [filtrados],
+  );
+
+  const novo = useMemo(
+    () => filtrados.filter((l) => normalizarTestamento(l.testament) === "Novo"),
+    [filtrados],
+  );
+
   return (
     <>
       <input
@@ -32,13 +50,37 @@ export default function LivrosClient({
         onChange={(e) => setQ(e.target.value)}
       />
 
-      <div className={styles.grid}>
-        {filtrados.map((l) => (
-          <Link key={l.id} href={`/livros/${l.slug}`} className={styles.card}>
-            {l.name}
-          </Link>
-        ))}
-      </div>
+      <section className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <h2 className={styles.sectionTitle}>Antigo Testamento</h2>
+          <span className={styles.sectionBadge}>{antigo.length}</span>
+        </div>
+
+        <div className={styles.grid}>
+          {antigo.map((l) => (
+            <Link key={l.id} href={`/livros/${l.slug}`} className={styles.card}>
+              <div className={styles.cardTitle}>{l.name}</div>
+              <div className={styles.count}>{l.chaptersCount} capítulos</div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <h2 className={styles.sectionTitle}>Novo Testamento</h2>
+          <span className={styles.sectionBadge}>{novo.length}</span>
+        </div>
+
+        <div className={styles.grid}>
+          {novo.map((l) => (
+            <Link key={l.id} href={`/livros/${l.slug}`} className={styles.card}>
+              <div className={styles.cardTitle}>{l.name}</div>
+              <div className={styles.count}>{l.chaptersCount} capítulos</div>
+            </Link>
+          ))}
+        </div>
+      </section>
 
       {filtrados.length === 0 && (
         <p className={styles.empty}>Nenhum livro encontrado.</p>

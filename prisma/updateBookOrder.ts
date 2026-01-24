@@ -1,21 +1,35 @@
 import { prisma } from "../lib/prisma";
 
 async function main() {
+  // Atualiza um por um sem quebrar se algum não existir
   await prisma.book.updateMany({
-    where: { slug: { in: ["salmos", "isaias", "jeremias"] } },
-    data: {}, // só pra garantir que existe; vamos atualizar um por um abaixo
+    where: { slug: "esdras" },
+    data: { order: 15 },
+  });
+  await prisma.book.updateMany({
+    where: { slug: "ester" },
+    data: { order: 17 },
+  });
+  await prisma.book.updateMany({
+    where: { slug: "jonas" },
+    data: { order: 32 },
+  });
+  await prisma.book.updateMany({
+    where: { slug: "miqueias" },
+    data: { order: 33 },
+  });
+  await prisma.book.updateMany({
+    where: { slug: "efesios" },
+    data: { order: 49 },
   });
 
-  await prisma.book.update({ where: { slug: "salmos" }, data: { order: 19 } });
-  await prisma.book.update({ where: { slug: "isaias" }, data: { order: 23 } });
-  await prisma.book.update({
-    where: { slug: "jeremias" },
-    data: { order: 24 },
+  // AQUI: slug correto é filemom (igual seu seed)
+  await prisma.book.updateMany({
+    where: { slug: "filemom" },
+    data: { order: 57 },
   });
 
-  console.log(
-    "✅ Order atualizado no banco para: salmos=19, isaias=23, jeremias=24",
-  );
+  console.log("✅ Orders atualizados (incluindo filemom=57).");
 }
 
 main()

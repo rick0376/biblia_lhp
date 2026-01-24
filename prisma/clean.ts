@@ -1,7 +1,9 @@
+//prisma/clean.ts
+
 import { prisma } from "../lib/prisma";
 
 async function limparSomenteAlgunsLivros() {
-  const slugs = ["salmos", "isaias", "jeremias"];
+  const slugs = ["jo"];
 
   console.log("Apagando somente:", slugs.join(", "));
 
