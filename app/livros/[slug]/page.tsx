@@ -1,6 +1,7 @@
+import Link from "next/link";
 import { prisma } from "../../../lib/prisma";
 import styles from "./styles.module.scss";
-import CapitulosClient from "../../components/CapitulosClient";
+import CapitulosClient from "../../components/CapitulosClient"; // se estiver usando
 
 export default async function LivroPage({
   params,
@@ -13,7 +14,7 @@ export default async function LivroPage({
     where: { slug },
     include: {
       chapters: {
-        where: { verses: { some: {} } },
+        where: { verses: { some: {} } }, // não mostrar vazios
         include: { _count: { select: { verses: true } } },
         orderBy: { number: "asc" },
       },
@@ -22,6 +23,7 @@ export default async function LivroPage({
 
   if (!livro) return <h1>Livro não encontrado</h1>;
 
+  // se você usa client component:
   const chapters = livro.chapters.map((c) => ({
     id: c.id,
     number: c.number,
@@ -30,12 +32,19 @@ export default async function LivroPage({
 
   return (
     <main className={styles.container}>
+      <Link
+        href="/livros"
+        className={styles.backLink}
+        aria-label="Voltar para livros"
+      >
+        <span className={styles.backIcon}>←</span>
+        <span className={styles.backText}>Voltar</span>
+      </Link>
+
       <div className={styles.headerRow}>
         <div>
           <h1 className={styles.title}>{livro.name}</h1>
-          <p className={styles.subtitle}>
-            Selecione um capítulo para abrir os versículos.
-          </p>
+          <p className={styles.subtitle}>Escolha um capítulo</p>
         </div>
 
         <span className={styles.badge}>{chapters.length} capítulos</span>

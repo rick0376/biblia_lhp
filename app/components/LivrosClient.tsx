@@ -56,29 +56,42 @@ export default function LivrosClient({ livros }: { livros: Livro[] }) {
           <span className={styles.sectionBadge}>{antigo.length}</span>
         </div>
 
-        <div className={styles.grid}>
-          {antigo.map((l) => (
-            <Link key={l.id} href={`/livros/${l.slug}`} className={styles.card}>
-              <div className={styles.cardTitle}>{l.name}</div>
-              <div className={styles.count}>{l.chaptersCount} capítulos</div>
-            </Link>
-          ))}
+        <div className={styles.sectionDivider}>
+          <div className={styles.grid}>
+            {antigo.map((l) => (
+              <Link
+                key={l.id}
+                href={`/livros/${l.slug}`}
+                className={styles.card}
+              >
+                <div className={styles.cardTitle}>{l.name}</div>
+                <div className={styles.count}>{l.chaptersCount} capítulos</div>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
       <section className={styles.section}>
         <div className={styles.sectionHeader}>
           <h2 className={styles.sectionTitle}>Novo Testamento</h2>
+
           <span className={styles.sectionBadge}>{novo.length}</span>
         </div>
 
-        <div className={styles.grid}>
-          {novo.map((l) => (
-            <Link key={l.id} href={`/livros/${l.slug}`} className={styles.card}>
-              <div className={styles.cardTitle}>{l.name}</div>
-              <div className={styles.count}>{l.chaptersCount} capítulos</div>
-            </Link>
-          ))}
+        <div className={styles.sectionDivider}>
+          <div className={styles.grid}>
+            {novo.map((l) => (
+              <Link
+                key={l.id}
+                href={`/livros/${l.slug}`}
+                className={styles.card}
+              >
+                <div className={styles.cardTitle}>{l.name}</div>
+                <div className={styles.count}>{l.chaptersCount} capítulos</div>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 

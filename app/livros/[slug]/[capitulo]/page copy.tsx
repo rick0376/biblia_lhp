@@ -11,8 +11,14 @@ export default async function CapituloPage({
   const numeroCapitulo = Number(capitulo);
 
   const chapter = await prisma.chapter.findFirst({
-    where: { number: numeroCapitulo, book: { slug } },
-    include: { book: true, verses: { orderBy: { number: "asc" } } },
+    where: {
+      number: numeroCapitulo,
+      book: { slug },
+    },
+    include: {
+      book: true,
+      verses: { orderBy: { number: "asc" } },
+    },
   });
 
   if (!chapter) return <h1>Capítulo não encontrado</h1>;
@@ -20,11 +26,11 @@ export default async function CapituloPage({
   const versiculos =
     chapter.verses.length > 0
       ? chapter.verses.map((v) => ({ number: v.number, text: v.text }))
-      : ((await buscarVersiculos(chapter.book.name, chapter.number)) ?? []);
+      : ((await buscarVersiculos(slug, chapter.number)) ?? []);
 
   return (
     <CapituloClient
-      slug={slug}
+      key={`${slug}-${chapter.number}`}
       livro={chapter.book.name}
       capitulo={chapter.number}
       versiculos={versiculos}

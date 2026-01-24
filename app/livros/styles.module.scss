@@ -131,9 +131,15 @@
 .sectionTitle {
   margin: 0;
   font-size: 20px;
-  font-weight: 600;
-  color: #f59e0b;
-  //color: rgba(243, 244, 246, 0.9);
+  font-weight: 800;
+  color: #f8ca14;
+}
+
+.sectionDivider {
+  margin: 18px 0;
+  padding: 18px 0;
+  border-top: 2px solid rgba(248, 202, 20, 0.55);
+  border-bottom: 2px solid rgba(248, 202, 20, 0.55);
 }
 
 .sectionBadge {

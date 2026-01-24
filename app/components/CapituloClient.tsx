@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import styles from "../livros/[slug]/[capitulo]/styles.module.scss";
 
@@ -9,43 +10,47 @@ export default function CapituloClient({
   versiculos,
   livro,
   capitulo,
+  slug,
 }: {
   versiculos: Versiculo[];
   livro: string;
   capitulo: number;
+  slug: string;
 }) {
   const [q, setQ] = useState("");
-  const [ativo, setAtivo] = useState<number>(() => capitulo);
+  const [ativo, setAtivo] = useState<number>(
+    () => versiculos?.[0]?.number ?? 1,
+  );
 
-  // quando trocar de capítulo (navegação), reseta o versículo ativo
-  useEffect(() => {
-    setAtivo(capitulo);
-  }, [capitulo]);
+  // filtra versículos por texto ou número
+  const filtrados = useMemo(() => {
+    const s = q.trim().toLowerCase();
+    if (!s) return versiculos;
 
-  // scroll pro versículo ativo
+    const num = Number(s.replace(/[^\d]/g, ""));
+    if (Number.isFinite(num) && num > 0) {
+      return versiculos.filter((v) => v.number === num);
+    }
+    return versiculos.filter((v) => v.text.toLowerCase().includes(s));
+  }, [q, versiculos]);
+
+  // ao carregar: destacar o primeiro versículo (ou o 1)
   useEffect(() => {
     const el = document.getElementById(`v-${ativo}`);
     el?.scrollIntoView({ behavior: "smooth", block: "center" });
   }, [ativo]);
 
-  // busca por número ou texto
-  const filtrados = useMemo(() => {
-    const s = q.trim().toLowerCase();
-    if (!s) return versiculos;
-
-    // se digitou número, filtra por número também
-    const numStr = s.replace(/[^\d]/g, "");
-    const num = Number(numStr);
-
-    return versiculos.filter((v) => {
-      const matchNumero = numStr ? v.number === num : false;
-      const matchTexto = v.text.toLowerCase().includes(s);
-      return matchNumero || matchTexto;
-    });
-  }, [q, versiculos]);
-
   return (
     <div className={styles.container}>
+      <Link
+        href={`/livros/${slug}`}
+        className={styles.backLink}
+        aria-label="Voltar para capítulos"
+      >
+        <span className={styles.backIcon}>←</span>
+        <span className={styles.backText}>Voltar</span>
+      </Link>
+
       <div className={styles.headerRow}>
         <h1 className={styles.title}>
           {livro} {capitulo}
@@ -61,38 +66,41 @@ export default function CapituloClient({
       />
 
       <div className={styles.verseNav}>
-        {versiculos.map((v) => (
+        {filtrados.map((v) => (
           <button
             key={v.number}
-            type="button"
             className={`${styles.verseBtn} ${
               ativo === v.number ? styles.activeBtn : ""
             }`}
-            onClick={() => setAtivo(v.number)}
+            onClick={() => {
+              setAtivo(v.number);
+              document
+                .getElementById(`v-${v.number}`)
+                ?.scrollIntoView({ behavior: "smooth", block: "center" });
+            }}
           >
             {v.number}
           </button>
         ))}
       </div>
 
-      {filtrados.length === 0 ? (
+      <ol className={styles.verses}>
+        {filtrados.map((v) => (
+          <li
+            key={v.number}
+            id={`v-${v.number}`}
+            className={`${styles.verseCard} ${
+              ativo === v.number ? styles.active : ""
+            }`}
+          >
+            <span className={styles.verseNumber}>{v.number}</span>
+            <span className={styles.verseText}>{v.text}</span>
+          </li>
+        ))}
+      </ol>
+
+      {filtrados.length === 0 && (
         <p className={styles.empty}>Nenhum versículo encontrado.</p>
-      ) : (
-        <ol className={styles.verses}>
-          {filtrados.map((v) => (
-            <li
-              key={v.number}
-              id={`v-${v.number}`}
-              className={`${styles.verseCard} ${
-                ativo === v.number ? styles.active : ""
-              }`}
-              onClick={() => setAtivo(v.number)}
-            >
-              <span className={styles.verseNumber}>{v.number}</span>
-              <span className={styles.verseText}>{v.text}</span>
-            </li>
-          ))}
-        </ol>
       )}
     </div>
   );
