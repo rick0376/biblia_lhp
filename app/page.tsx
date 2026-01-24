@@ -4,6 +4,7 @@ import styles from "./styles.module.scss";
 
 export default async function Home() {
   const booksCount = await prisma.book.count();
+  const hymnsCount = await prisma.hymn.count();
 
   return (
     <main className={styles.container}>
@@ -36,8 +37,8 @@ export default async function Home() {
             </div>
 
             <div className={styles.stat}>
-              <div className={styles.statLabel}>Autor</div>
-              <div className={styles.statValue}>Rick Pereira</div>
+              <div className={styles.statLabel}>Hinos (Harpa)</div>
+              <div className={styles.statValue}>{hymnsCount}</div>
             </div>
 
             <div className={styles.stat}>
@@ -48,11 +49,11 @@ export default async function Home() {
 
           <div className={styles.actions}>
             <Link className={styles.primaryBtn} href="/livros">
-              Abrir livros →
+              📖 Abrir Bíblia →
             </Link>
 
-            <Link className={styles.primaryBtn} href="/harpa">
-              Hino Harpa →
+            <Link className={styles.secondaryBtn} href="/harpa">
+              🎵 Abrir Harpa ({hymnsCount})
             </Link>
 
             <Link className={styles.secondaryBtn} href="/livros/apocalipse">
