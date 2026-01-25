@@ -2,7 +2,7 @@
 
 type Verse = {
   id: number;
-  type: "VERSE" | "CHORUS";
+  type: string;
   number: number;
   text: string;
 };
