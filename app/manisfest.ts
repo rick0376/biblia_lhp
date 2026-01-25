@@ -4,7 +4,6 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Bíblia Sagrada & Harpa Cristã",
     short_name: "Bíblia & Harpa",
-    description: "Bíblia Sagrada e Harpa Cristã",
     start_url: "/",
     display: "standalone",
     background_color: "#0b1020",
