@@ -3,11 +3,6 @@ import { prisma } from "../../../lib/prisma";
 import styles from "./styles.module.scss";
 import HinoClient from "../../components/HinoClient";
 
-type VerseItem = {
-  number: number;
-  text: string;
-};
-
 export default async function HinoPage({
   params,
 }: {
@@ -41,12 +36,7 @@ export default async function HinoPage({
   if (!hino) {
     return <h1>Hino não encontrado</h1>;
   }
-  /*
-  const verses = hino.verses.map((v: { number: number; text: string }) => ({
-    number: v.number,
-    text: v.text,
-  }));
-*/
+
   return (
     <main className={styles.container}>
       <header className={styles.headerRow}>
@@ -62,7 +52,6 @@ export default async function HinoPage({
         </div>
       </header>
 
-      {/* ⚠️ PASSANDO EXATAMENTE O QUE O HinoClient ESPERA */}
       <HinoClient verses={hino.verses} styles={styles} />
     </main>
   );
