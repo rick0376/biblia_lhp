@@ -6,34 +6,23 @@ type HarpaJsonRoot = Record<string, unknown>;
 
 type HarpaJsonHino = {
   hino: string; // "1 - Chuvas de Graça"
-  coro?: string; // html com <br>
-  verses: Record<string, string>; // {"1":"...", "2":"..."}
+  coro?: string; // html <br>
+  verses: Record<string, string>;
 };
 
 function normalizeHtml(text: string): string {
   return text
-    .replaceAll("<br>", "\n")
-    .replaceAll("<br/>", "\n")
     .replaceAll("<br />", "\n")
+    .replaceAll("<br/>", "\n")
+    .replaceAll("<br>", "\n")
     .replaceAll("&nbsp;", " ")
     .trim();
 }
 
 function parseHinoTitle(hinoField: string): { number: number; title: string } {
-  // aceita "1 - Título" / "1- Título" / "1 – Título"
   const m = hinoField.match(/^\s*(\d+)\s*[-–]\s*(.+?)\s*$/);
-  if (!m) {
-    // fallback: tenta pegar só o número no começo
-    const n = Number(hinoField.trim().split(/\s+/)[0]);
-    if (!Number.isFinite(n))
-      throw new Error(`Formato inválido em "hino": ${hinoField}`);
-    return {
-      number: n,
-      title:
-        hinoField.replace(String(n), "").replace("-", "").trim() || `Hino ${n}`,
-    };
-  }
-  return { number: Number(m[1]), title: m[2] };
+  if (!m) throw new Error(`Formato inválido em "hino": ${hinoField}`);
+  return { number: Number(m[1]), title: m[2].trim() };
 }
 
 function loadHarpa(): HarpaJsonHino[] {
@@ -48,97 +37,102 @@ function loadHarpa(): HarpaJsonHino[] {
   }
 
   const root = data as HarpaJsonRoot;
-
   const items: HarpaJsonHino[] = [];
 
   for (const [key, value] of Object.entries(root)) {
-    if (key === "-1") continue; // metadados
+    if (key === "-1") continue;
+
     if (typeof value !== "object" || value === null || Array.isArray(value))
       continue;
-
     const obj = value as Record<string, unknown>;
 
-    if (typeof obj.hino !== "string") continue;
-    if (
-      typeof obj.verses !== "object" ||
-      obj.verses === null ||
-      Array.isArray(obj.verses)
-    )
+    const hino = obj.hino;
+    const coro = obj.coro;
+    const verses = obj.verses;
+
+    if (typeof hino !== "string") continue;
+    if (typeof verses !== "object" || verses === null || Array.isArray(verses))
       continue;
 
     items.push({
-      hino: obj.hino,
-      coro: typeof obj.coro === "string" ? obj.coro : undefined,
-      verses: obj.verses as Record<string, string>,
+      hino,
+      coro: typeof coro === "string" ? coro : undefined,
+      verses: verses as Record<string, string>,
     });
   }
 
-  // ordena por número extraído do campo "hino"
   items.sort(
     (a, b) => parseHinoTitle(a.hino).number - parseHinoTitle(b.hino).number,
   );
-
   return items;
 }
 
 async function main() {
-  console.log("🎵 Iniciando seed da Harpa (formato objeto)");
+  console.log("🎵 Seed Harpa: coro ENTRE os versos");
 
   const hinos = loadHarpa();
-  console.log(`📦 Total de itens lidos: ${hinos.length}`);
+  console.log(`📦 Total de hinos: ${hinos.length}`);
 
   for (const h of hinos) {
     const { number, title } = parseHinoTitle(h.hino);
 
-    const hymn = await prisma.hymn.upsert({
-      where: { number },
-      update: { title },
-      create: { number, title },
+    const hymn = await prisma.hymn.create({
+      data: { number, title },
     });
 
-    // limpa versos antigos pra não duplicar
-    await prisma.hymnVerse.deleteMany({
-      where: { hymnId: hymn.id },
-    });
-
-    const versesToInsert: { hymnId: number; number: number; text: string }[] =
-      [];
-
-    // coro vira verso 0 (pra aparecer separado, se você quiser)
-    if (h.coro) {
-      versesToInsert.push({
-        hymnId: hymn.id,
-        number: 0,
-        text: normalizeHtml(h.coro),
-      });
-    }
-
-    // versos 1..N
-    const entries = Object.entries(h.verses)
-      .map(([k, v]) => ({ n: Number(k), text: String(v) }))
-      .filter((x) => Number.isFinite(x.n))
+    // estrofes ordenadas
+    const verses = Object.entries(h.verses)
+      .map(([k, v]) => ({ n: Number(k), text: normalizeHtml(String(v)) }))
+      .filter((x) => Number.isFinite(x.n) && x.n > 0)
       .sort((a, b) => a.n - b.n);
 
-    for (const v of entries) {
-      versesToInsert.push({
+    const chorus = h.coro ? normalizeHtml(h.coro) : null;
+
+    /**
+     * Regra: coro entre os versos.
+     * Exemplo: 1, coro, 2, coro, 3, coro...
+     * Se não tiver coro, fica só 1..N.
+     */
+    const parts: {
+      hymnId: number;
+      number: number;
+      text: string;
+      type: "VERSE" | "CHORUS";
+      position: number;
+    }[] = [];
+
+    let pos = 1;
+    for (const v of verses) {
+      parts.push({
         hymnId: hymn.id,
         number: v.n,
-        text: normalizeHtml(v.text),
+        text: v.text,
+        type: "VERSE",
+        position: pos++,
       });
+
+      if (chorus) {
+        parts.push({
+          hymnId: hymn.id,
+          // number precisa ser único por hino. usamos 1000+pos pra não bater com 1..N
+          number: 1000 + pos,
+          text: chorus,
+          type: "CHORUS",
+          position: pos++,
+        });
+      }
     }
 
-    if (versesToInsert.length) {
-      await prisma.hymnVerse.createMany({
-        data: versesToInsert,
-      });
+    if (parts.length) {
+      await prisma.hymnVerse.createMany({ data: parts });
     }
 
     console.log(
-      `✅ Hino ${number} - ${title} (${versesToInsert.length} partes)`,
+      `✅ Hino ${number} - ${title} | versos: ${verses.length} | coro: ${chorus ? "sim" : "não"}`,
     );
   }
 
-  console.log("🎉 Harpa importada completa!");
+  console.log("🎉 Harpa importada!");
 }
 
 main()

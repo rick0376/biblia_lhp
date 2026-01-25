@@ -47,16 +47,22 @@ model Hymn {
   id      Int        @id @default(autoincrement())
   number  Int        @unique
   title   String
+  chorus  String?
   verses  HymnVerse[]
 }
 
 model HymnVerse {
-  id      Int    @id @default(autoincrement())
-  hymnId  Int
-  number  Int
-  text    String
+  id       Int    @id @default(autoincrement())
+  hymnId   Int
+  number   Int
+  text     String
 
-  hymn    Hymn   @relation(fields: [hymnId], references: [id], onDelete: Cascade)
+  // NOVOS
+  type     String @default("VERSE") // "VERSE" | "CHORUS"
+  position Int    @default(0)       // ordenação real na tela
+
+  hymn     Hymn   @relation(fields: [hymnId], references: [id], onDelete: Cascade)
 
   @@unique([hymnId, number])
+  @@index([hymnId, position])
 }

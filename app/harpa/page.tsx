@@ -9,7 +9,9 @@ export default async function HarpaPage() {
     orderBy: { number: "asc" },
   });
 
-  const hinosFormatados = hinos.map((h) => ({
+  type HinoRow = (typeof hinos)[number];
+
+  const hinosFormatados = hinos.map((h: HinoRow) => ({
     number: h.number,
     title: h.title,
     versesCount: h._count.verses,

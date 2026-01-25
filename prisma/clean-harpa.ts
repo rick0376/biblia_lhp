@@ -1,28 +1,17 @@
 import { prisma } from "../lib/prisma";
 
 async function main() {
-  const nums = [1, 2];
+  console.log("🧹 Limpando Harpa Cristã...");
 
-  console.log("🧹 Removendo hinos de teste:", nums.join(", "));
+  // Apaga primeiro os versos (por segurança)
+  await prisma.hymnVerse.deleteMany({});
+  await prisma.hymn.deleteMany({});
 
-  // apaga versos primeiro
-  await prisma.hymnVerse.deleteMany({
-    where: {
-      hymn: { number: { in: nums } },
-    },
-  });
-
-  // apaga hinos
-  await prisma.hymn.deleteMany({
-    where: { number: { in: nums } },
-  });
-
-  console.log("✅ Removidos com sucesso!");
+  console.log("✅ Harpa Cristã removida do banco.");
 }
 
 main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => prisma.$disconnect());
+  .catch(console.error)
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

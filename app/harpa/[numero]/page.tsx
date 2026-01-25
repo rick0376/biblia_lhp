@@ -3,6 +3,11 @@ import { prisma } from "../../../lib/prisma";
 import styles from "./styles.module.scss";
 import HinoClient from "../../components/HinoClient";
 
+type VerseItem = {
+  number: number;
+  text: string;
+};
+
 export default async function HinoPage({
   params,
 }: {
@@ -11,17 +16,37 @@ export default async function HinoPage({
   const { numero } = await params;
   const n = Number(numero);
 
-  if (!Number.isFinite(n)) return <h1>Hino inválido</h1>;
+  if (!Number.isFinite(n) || n <= 0) {
+    return <h1>Hino inválido</h1>;
+  }
 
   const hino = await prisma.hymn.findUnique({
     where: { number: n },
-    include: { verses: { orderBy: { number: "asc" } } },
+    select: {
+      number: true,
+      title: true,
+
+      verses: {
+        orderBy: { position: "asc" },
+        select: {
+          id: true,
+          type: true,
+          number: true,
+          text: true,
+        },
+      },
+    },
   });
 
-  if (!hino) return <h1>Hino não encontrado</h1>;
-
-  const verses = hino.verses.map((v) => ({ number: v.number, text: v.text }));
-
+  if (!hino) {
+    return <h1>Hino não encontrado</h1>;
+  }
+  /*
+  const verses = hino.verses.map((v: { number: number; text: string }) => ({
+    number: v.number,
+    text: v.text,
+  }));
+*/
   return (
     <main className={styles.container}>
       <header className={styles.headerRow}>
@@ -37,7 +62,8 @@ export default async function HinoPage({
         </div>
       </header>
 
-      <HinoClient verses={verses} styles={styles} />
+      {/* ⚠️ PASSANDO EXATAMENTE O QUE O HinoClient ESPERA */}
+      <HinoClient verses={hino.verses} styles={styles} />
     </main>
   );
 }
