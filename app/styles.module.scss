@@ -4,21 +4,21 @@
   display: grid;
   place-items: center;
 
-  /* fundo escuro com luz suave */
+  /* fundo mais claro (grafite/azul-noite) */
   background:
     radial-gradient(
       900px 520px at 15% 10%,
-      rgba(245, 158, 11, 0.18),
+      rgba(245, 158, 11, 0.14),
       transparent 60%
     ),
     radial-gradient(
       820px 460px at 80% 20%,
-      rgba(168, 85, 247, 0.12),
+      rgba(168, 85, 247, 0.1),
       transparent 60%
     ),
     radial-gradient(
       900px 550px at 50% 95%,
-      rgba(34, 197, 94, 0.1),
+      rgba(34, 197, 94, 0.08),
       transparent 60%
     ),
     linear-gradient(180deg, #101827 0%, #0b1020 100%);

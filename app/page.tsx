@@ -25,9 +25,9 @@ export default async function Home() {
           <div className={styles.ornament} />
 
           <p className={styles.subtitle}>
-            Uma experiência limpa e rápida para navegar por livros, capítulos e
-            versículos. Use a busca em cada página para encontrar o que precisa
-            em segundos.
+            Uma experiência limpa e rápida para navegar por livros, capítulos,
+            versículos e a Harpa Cristã. Use a busca em cada página para
+            encontrar o que precisa em segundos.
           </p>
 
           <div className={styles.stats}>
