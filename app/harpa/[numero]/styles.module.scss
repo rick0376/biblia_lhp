@@ -102,3 +102,23 @@
   color: rgba(243, 244, 246, 0.92);
   line-height: 1.6;
 }
+.search {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(245, 158, 11, 0.22);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(229, 231, 235, 0.9);
+  outline: none;
+  margin: 10px 0 16px;
+}
+
+.search::placeholder {
+  color: rgba(229, 231, 235, 0.45);
+}
+
+.empty {
+  margin-top: 14px;
+  text-align: center;
+  color: rgba(229, 231, 235, 0.6);
+}

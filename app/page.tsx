@@ -42,8 +42,8 @@ export default async function Home() {
             </div>
 
             <div className={styles.stat}>
-              <div className={styles.statLabel}>Empresa</div>
-              <div className={styles.statValue}>LHPSYSTEMS</div>
+              <div className={styles.statLabel}>Autor</div>
+              <div className={styles.statValue}>Rick Pereira</div>
             </div>
           </div>
 

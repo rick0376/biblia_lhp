@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { prisma } from "../../../lib/prisma";
 import styles from "./styles.module.scss";
+import HinoClient from "../../components/HinoClient";
 
 export default async function HinoPage({
   params,
@@ -19,6 +20,8 @@ export default async function HinoPage({
 
   if (!hino) return <h1>Hino não encontrado</h1>;
 
+  const verses = hino.verses.map((v) => ({ number: v.number, text: v.text }));
+
   return (
     <main className={styles.container}>
       <header className={styles.headerRow}>
@@ -34,14 +37,7 @@ export default async function HinoPage({
         </div>
       </header>
 
-      <ol className={styles.list}>
-        {hino.verses.map((v) => (
-          <li key={v.number} className={styles.card}>
-            <div className={styles.badge}>Estrofe {v.number}</div>
-            <pre className={styles.text}>{v.text}</pre>
-          </li>
-        ))}
-      </ol>
+      <HinoClient verses={verses} styles={styles} />
     </main>
   );
 }

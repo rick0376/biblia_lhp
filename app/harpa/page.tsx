@@ -1,12 +1,19 @@
 import Link from "next/link";
 import { prisma } from "../../lib/prisma";
 import styles from "./styles.module.scss";
+import HarpaClient from "../components/HarpaClient";
 
 export default async function HarpaPage() {
   const hinos = await prisma.hymn.findMany({
     select: { number: true, title: true, _count: { select: { verses: true } } },
     orderBy: { number: "asc" },
   });
+
+  const hinosFormatados = hinos.map((h) => ({
+    number: h.number,
+    title: h.title,
+    versesCount: h._count.verses,
+  }));
 
   return (
     <main className={styles.container}>
@@ -25,20 +32,7 @@ export default async function HarpaPage() {
         </div>
       </header>
 
-      <div className={styles.grid}>
-        {hinos.map((h) => (
-          <Link
-            key={h.number}
-            href={`/harpa/${h.number}`}
-            className={styles.card}
-          >
-            <div className={styles.cardTitle}>
-              {h.number}. {h.title}
-            </div>
-            <div className={styles.count}>{h._count.verses} estrofes</div>
-          </Link>
-        ))}
-      </div>
+      <HarpaClient hinos={hinosFormatados} styles={styles} />
     </main>
   );
 }
