@@ -52,7 +52,7 @@ export default async function Home() {
               📖 Bíblia Sagrada →
             </Link>
 
-            <Link className={styles.primaryBtn} href="/harpa">
+            <Link className={styles.secondaryBtn} href="/harpa">
               🎵 Harpa ({hymnsCount})
             </Link>
 
