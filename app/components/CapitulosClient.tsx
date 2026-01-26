@@ -23,7 +23,6 @@ export default function CapitulosClient({
     const s = q.trim().toLowerCase();
     if (!s) return chapters;
 
-    // aceita: "5", "cap 5", "capítulo 5"
     const numStr = s.replace(/[^\d]/g, "");
     const num = Number(numStr);
 

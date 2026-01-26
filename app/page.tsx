@@ -49,11 +49,11 @@ export default async function Home() {
 
           <div className={styles.actions}>
             <Link className={styles.primaryBtn} href="/livros">
-              📖 Abrir Bíblia →
+              📖 Bíblia Sagrada →
             </Link>
 
-            <Link className={styles.secondaryBtn} href="/harpa">
-              🎵 Abrir Harpa ({hymnsCount})
+            <Link className={styles.primaryBtn} href="/harpa">
+              🎵 Harpa ({hymnsCount})
             </Link>
 
             <Link className={styles.secondaryBtn} href="/livros/apocalipse">

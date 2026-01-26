@@ -29,8 +29,8 @@ export default async function Livros() {
     <main className={styles.container}>
       <div className={styles.header}>
         <div className={styles.headerRow}>
-          <Link href="/" className={styles.backBtn} aria-label="Voltar">
-            ←
+          <Link href="/" className={styles.backLink} aria-label="Voltar">
+            <span className={styles.backIcon}>←</span>
           </Link>
 
           <div>
@@ -41,7 +41,6 @@ export default async function Livros() {
           </div>
         </div>
       </div>
-
       <LivrosClient livros={livrosFormatados} />
     </main>
   );

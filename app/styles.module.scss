@@ -4,7 +4,6 @@
   display: grid;
   place-items: center;
 
-  /* fundo mais claro (grafite/azul-noite) */
   background:
     radial-gradient(
       900px 520px at 15% 10%,
@@ -66,7 +65,7 @@
   background:
     radial-gradient(
       1200px 800px at 20% 10%,
-      rgba(245, 158, 11, 0.1),
+      rgba(158, 102, 5, 0.1),
       transparent 55%
     ),
     radial-gradient(
