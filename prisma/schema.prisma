@@ -3,9 +3,13 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"   // ou mysql / sqlite
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+/* =========================
+   BÍBLIA
+========================= */
 
 model Book {
   id        Int       @id @default(autoincrement())
@@ -22,27 +26,41 @@ model Chapter {
   number  Int
 
   bookId  Int
-  book    Book   @relation(fields: [bookId], references: [id])
+  book    Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
 
   verses  Verse[]
 
   @@unique([bookId, number])
 }
 
+/* ===== TRADUÇÕES ===== */
+
+model Translation {
+  id    Int    @id @default(autoincrement())
+  code  String @unique   // "acf", "ara", "nvi"
+  name  String           // "Almeida Corrigida Fiel"
+
+  verses Verse[]
+}
+
 model Verse {
-  id        Int    @id @default(autoincrement())
-  number    Int
-  text      String
+  id            Int    @id @default(autoincrement())
+  number        Int
+  text          String
 
-  chapterId Int
-  chapter   Chapter @relation(fields: [chapterId], references: [id])
+  chapterId     Int
+  chapter       Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
 
-  @@unique([chapterId, number])
+  translationId Int
+  translation   Translation @relation(fields: [translationId], references: [id], onDelete: Cascade)
+
+  @@unique([chapterId, number, translationId])
 }
 
 /* =========================
    HARPA CRISTÃ
 ========================= */
+
 model Hymn {
   id      Int        @id @default(autoincrement())
   number  Int        @unique
@@ -51,15 +69,20 @@ model Hymn {
   verses  HymnVerse[]
 }
 
+/* Usar ENUM é melhor que string solta */
+enum HymnVerseType {
+  VERSE
+  CHORUS
+}
+
 model HymnVerse {
   id       Int    @id @default(autoincrement())
   hymnId   Int
   number   Int
   text     String
 
-  // NOVOS
-  type     String @default("VERSE") // "VERSE" | "CHORUS"
-  position Int    @default(0)       // ordenação real na tela
+  type     HymnVerseType @default(VERSE)
+  position Int           @default(0)
 
   hymn     Hymn   @relation(fields: [hymnId], references: [id], onDelete: Cascade)
 

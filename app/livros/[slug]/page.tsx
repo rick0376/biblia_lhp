@@ -1,27 +1,53 @@
 import Link from "next/link";
 import { prisma } from "../../../lib/prisma";
+import CapitulosClient from "../../components/CapitulosClient";
 import styles from "./styles.module.scss";
-import CapitulosClient from "../../components/CapitulosClient"; // se estiver usando
 
-type ChapterItem = {
-  id: number;
-  number: number;
-  _count: { verses: number };
-};
+type Version = "acf" | "ara" | "nvi";
+
+function normalizeVersion(v?: string): Version {
+  if (v === "acf" || v === "ara" || v === "nvi") return v;
+  return "acf";
+}
 
 export default async function LivroPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ v?: string }>;
 }) {
   const { slug } = await params;
+  const { v } = (await searchParams) ?? {};
+  const version = normalizeVersion(v);
+
+  const translation = await prisma.translation.findUnique({
+    where: { code: version },
+    select: { id: true },
+  });
+
+  if (!translation) return <h1>Tradução não encontrada</h1>;
 
   const livro = await prisma.book.findUnique({
     where: { slug },
-    include: {
+    select: {
+      name: true,
+      slug: true,
       chapters: {
-        where: { verses: { some: {} } }, // não mostrar vazios
-        include: { _count: { select: { verses: true } } },
+        where: {
+          verses: { some: { translationId: translation.id } },
+        },
+        select: {
+          id: true,
+          number: true,
+          _count: {
+            select: {
+              verses: {
+                where: { translationId: translation.id },
+              },
+            },
+          },
+        },
         orderBy: { number: "asc" },
       },
     },
@@ -29,8 +55,7 @@ export default async function LivroPage({
 
   if (!livro) return <h1>Livro não encontrado</h1>;
 
-  // se você usa client component:
-  const chapters = (livro.chapters as ChapterItem[]).map((c) => ({
+  const chapters = livro.chapters.map((c) => ({
     id: c.id,
     number: c.number,
     versesCount: c._count.verses,
@@ -38,8 +63,9 @@ export default async function LivroPage({
 
   return (
     <main className={styles.container}>
+      {/* 🔙 voltar mantendo versão */}
       <Link
-        href="/livros"
+        href={`/livros?v=${version}`}
         className={styles.backLink}
         aria-label="Voltar para livros"
       >
@@ -47,16 +73,24 @@ export default async function LivroPage({
         <span className={styles.backText}>Voltar</span>
       </Link>
 
+      {/* ✅ HEADER QUE TINHA SUMIDO */}
       <div className={styles.headerRow}>
         <div>
           <h1 className={styles.title}>{livro.name}</h1>
           <p className={styles.subtitle}>Escolha um capítulo</p>
         </div>
 
-        <span className={styles.badge}>{chapters.length} capítulos</span>
+        <span className={styles.badge}>
+          {chapters.length} capítulos • {version.toUpperCase()}
+        </span>
       </div>
 
-      <CapitulosClient slug={livro.slug} chapters={chapters} />
+      {/* ✅ client component só com lógica */}
+      <CapitulosClient
+        slug={livro.slug}
+        chapters={chapters}
+        version={version}
+      />
     </main>
   );
 }

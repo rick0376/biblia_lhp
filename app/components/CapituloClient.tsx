@@ -5,17 +5,20 @@ import { useEffect, useMemo, useState } from "react";
 import styles from "../livros/[slug]/[capitulo]/styles.module.scss";
 
 type Versiculo = { number: number; text: string };
+type Version = "acf" | "ara" | "nvi";
 
 export default function CapituloClient({
   versiculos,
   livro,
   capitulo,
   slug,
+  version,
 }: {
   versiculos: Versiculo[];
   livro: string;
   capitulo: number;
   slug: string;
+  version: Version;
 }) {
   const [q, setQ] = useState("");
   const [ativo, setAtivo] = useState<number>(
@@ -42,8 +45,9 @@ export default function CapituloClient({
 
   return (
     <div className={styles.container}>
+      {/* ✅ volta mantendo a versão */}
       <Link
-        href={`/livros/${slug}`}
+        href={`/livros/${slug}?v=${version}#top`}
         className={styles.backLink}
         aria-label="Voltar para capítulos"
       >
@@ -55,7 +59,10 @@ export default function CapituloClient({
         <h1 className={styles.title}>
           {livro} {capitulo}
         </h1>
-        <span className={styles.badge}>{versiculos.length} versículos</span>
+
+        <span className={styles.badge}>
+          {versiculos.length} versículos • {version.toUpperCase()}
+        </span>
       </div>
 
       <input

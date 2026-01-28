@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import styles from "../livros/styles.module.scss";
 
+type Version = "acf" | "ara" | "nvi";
+
 type Livro = {
   id: number;
   name: string;
@@ -18,17 +20,30 @@ function normalizarTestamento(t: string) {
   return "Antigo";
 }
 
-export default function LivrosClient({ livros }: { livros: Livro[] }) {
+export default function LivrosClient({
+  livros,
+  version,
+}: {
+  livros?: Livro[];
+  version: Version;
+}) {
   const [q, setQ] = useState("");
+
+  // ✅ estabiliza a referência (para não mudar deps toda render)
+  const livrosSafe = useMemo<Livro[]>(
+    () => (Array.isArray(livros) ? livros : []),
+    [livros],
+  );
 
   const filtrados = useMemo(() => {
     const s = q.trim().toLowerCase();
-    if (!s) return livros;
-    return livros.filter(
+    if (!s) return livrosSafe;
+
+    return livrosSafe.filter(
       (l) =>
         l.name.toLowerCase().includes(s) || l.slug.toLowerCase().includes(s),
     );
-  }, [q, livros]);
+  }, [q, livrosSafe]);
 
   const antigo = useMemo(
     () =>
@@ -61,7 +76,7 @@ export default function LivrosClient({ livros }: { livros: Livro[] }) {
             {antigo.map((l) => (
               <Link
                 key={l.id}
-                href={`/livros/${l.slug}`}
+                href={`/livros/${l.slug}?v=${version}`}
                 className={styles.card}
               >
                 <div className={styles.cardTitle}>{l.name}</div>
@@ -75,7 +90,6 @@ export default function LivrosClient({ livros }: { livros: Livro[] }) {
       <section className={styles.section}>
         <div className={styles.sectionHeader}>
           <h2 className={styles.sectionTitle}>Novo Testamento</h2>
-
           <span className={styles.sectionBadge}>{novo.length}</span>
         </div>
 
@@ -84,7 +98,7 @@ export default function LivrosClient({ livros }: { livros: Livro[] }) {
             {novo.map((l) => (
               <Link
                 key={l.id}
-                href={`/livros/${l.slug}`}
+                href={`/livros/${l.slug}?v=${version}`}
                 className={styles.card}
               >
                 <div className={styles.cardTitle}>{l.name}</div>

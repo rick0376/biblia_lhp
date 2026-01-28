@@ -2,7 +2,22 @@ import Link from "next/link";
 import { prisma } from "../lib/prisma";
 import styles from "./styles.module.scss";
 
-export default async function Home() {
+type Version = "acf" | "ara" | "nvi";
+
+function normalizeVersion(v?: string): Version {
+  const s = (v ?? "").toLowerCase();
+  if (s === "acf" || s === "ara" || s === "nvi") return s;
+  return "acf";
+}
+
+export default async function Home({
+  searchParams,
+}: {
+  searchParams?: Promise<{ v?: string }>;
+}) {
+  const { v } = (await searchParams) ?? {};
+  const version = normalizeVersion(v);
+
   const booksCount = await prisma.book.count();
   const hymnsCount = await prisma.hymn.count();
 
@@ -17,7 +32,9 @@ export default async function Home() {
         <div className={styles.inner}>
           <div className={styles.headerRow}>
             <span className={styles.badge}>📜 Leitura • Estudo • Pesquisa</span>
-            <span className={styles.badge}>✨ ACF • LHPSYSTEMS</span>
+            <span className={styles.badge}>
+              ✨ Versão: {version.toUpperCase()}
+            </span>
           </div>
 
           <h1 className={styles.title}>Bíblia Sagrada - LHP</h1>
@@ -26,9 +43,33 @@ export default async function Home() {
 
           <p className={styles.subtitle}>
             Uma experiência limpa e rápida para navegar por livros, capítulos,
-            versículos e a Harpa Cristã. Use a busca em cada página para
-            encontrar o que precisa em segundos.
+            versículos e a Harpa Cristã.
           </p>
+
+          {/* ✅ seletor de versão (sem client component, só links) */}
+          <Link
+            href="/?v=acf"
+            className={`${styles.secondaryBtn} ${version === "acf" ? styles.activeBtn : ""}`}
+            aria-current={version === "acf" ? "page" : undefined}
+          >
+            ACF
+          </Link>
+
+          <Link
+            href="/?v=ara"
+            className={`${styles.secondaryBtn} ${version === "ara" ? styles.activeBtn : ""}`}
+            aria-current={version === "ara" ? "page" : undefined}
+          >
+            ARA
+          </Link>
+
+          <Link
+            href="/?v=nvi"
+            className={`${styles.secondaryBtn} ${version === "nvi" ? styles.activeBtn : ""}`}
+            aria-current={version === "nvi" ? "page" : undefined}
+          >
+            NVI
+          </Link>
 
           <div className={styles.stats}>
             <div className={styles.stat}>
@@ -48,7 +89,8 @@ export default async function Home() {
           </div>
 
           <div className={styles.actions}>
-            <Link className={styles.primaryBtn} href="/livros">
+            {/* ✅ passa a versão para /livros */}
+            <Link className={styles.primaryBtn} href={`/livros?v=${version}`}>
               📖 Bíblia Sagrada →
             </Link>
 
@@ -56,7 +98,11 @@ export default async function Home() {
               🎵 Harpa ({hymnsCount})
             </Link>
 
-            <Link className={styles.secondaryBtn} href="/livros/apocalipse">
+            {/* ✅ passa a versão para o livro direto */}
+            <Link
+              className={styles.secondaryBtn}
+              href={`/livros/apocalipse?v=${version}`}
+            >
               Ir para Apocalipse
             </Link>
           </div>

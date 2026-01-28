@@ -1,23 +1,72 @@
+import Link from "next/link";
 import { prisma } from "../../lib/prisma";
 import styles from "./styles.module.scss";
 import LivrosClient from "../components/LivrosClient";
-import Link from "next/link";
 
-export default async function Livros() {
+type Version = "acf" | "ara" | "nvi";
+
+function normalizeVersion(v?: string): Version {
+  const s = (v ?? "").toLowerCase();
+  if (s === "acf" || s === "ara" || s === "nvi") return s;
+  return "acf";
+}
+
+export default async function Livros({
+  searchParams,
+}: {
+  searchParams?: Promise<{ v?: string }>;
+}) {
+  const { v } = (await searchParams) ?? {};
+  const version = normalizeVersion(v);
+
+  const translation = await prisma.translation.findUnique({
+    where: { code: version },
+    select: { id: true },
+  });
+
+  // se ainda não existe no banco, não quebra a página
+  if (!translation) {
+    return (
+      <main className={styles.container}>
+        <div className={styles.header}>
+          <div className={styles.headerRow}>
+            <Link href="/" className={styles.backLink} aria-label="Voltar">
+              <span className={styles.backIcon}>←</span>
+            </Link>
+
+            <div>
+              <h1 className={styles.title}>Livros da Bíblia</h1>
+              <p className={styles.subtitle}>
+                Tradução <b>{version.toUpperCase()}</b> ainda não foi importada
+                no banco.
+              </p>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   const livros = await prisma.book.findMany({
     select: {
       id: true,
       name: true,
       slug: true,
       testament: true,
-      _count: { select: { chapters: true } },
+      _count: {
+        select: {
+          chapters: {
+            where: {
+              verses: { some: { translationId: translation.id } },
+            },
+          },
+        },
+      },
     },
     orderBy: { order: "asc" },
   });
 
-  type LivroRow = (typeof livros)[number];
-
-  const livrosFormatados = livros.map((l: LivroRow) => ({
+  const livrosFormatados = livros.map((l) => ({
     id: l.id,
     name: l.name,
     slug: l.slug,
@@ -36,12 +85,13 @@ export default async function Livros() {
           <div>
             <h1 className={styles.title}>Livros da Bíblia</h1>
             <p className={styles.subtitle}>
-              Selecione um livro para ver capítulos e versículos.
+              Selecione um livro • <b>{version.toUpperCase()}</b>
             </p>
           </div>
         </div>
       </div>
-      <LivrosClient livros={livrosFormatados} />
+
+      <LivrosClient livros={livrosFormatados} version={version} />
     </main>
   );
 }
