@@ -1,10 +1,12 @@
+//app/components/CapitulosClient.tsx
+
 "use client";
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import styles from "../livros/[slug]/styles.module.scss";
 
-type Version = "acf" | "ara" | "nvi";
+type Version = "acf" | "ara" | "nvi" | "kja";
 
 type ChapterItem = {
   id: number;
@@ -27,7 +29,6 @@ export default function CapitulosClient({
     const s = q.trim().toLowerCase();
     if (!s) return chapters;
 
-    // aceita "5", "cap 5", "capítulo 5" etc.
     const numStr = s.replace(/[^\d]/g, "");
     const num = Number(numStr);
 
@@ -37,7 +38,6 @@ export default function CapitulosClient({
 
   return (
     <>
-      {/* ✅ INPUT DE BUSCA (é aqui que ele fica) */}
       <input
         className={styles.search}
         placeholder="Buscar capítulo (ex: 5)"

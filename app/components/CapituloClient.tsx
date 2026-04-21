@@ -1,11 +1,19 @@
+//app/components/CapituloClient.tsx
+
 "use client";
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import styles from "../livros/[slug]/[capitulo]/styles.module.scss";
 
-type Versiculo = { number: number; text: string };
-type Version = "acf" | "ara" | "nvi";
+type Versiculo = {
+  id: number;
+  number: number;
+  text: string;
+  isFavorite: boolean;
+};
+
+type Version = "acf" | "ara" | "nvi" | "kja";
 
 export default function CapituloClient({
   versiculos,
@@ -24,8 +32,11 @@ export default function CapituloClient({
   const [ativo, setAtivo] = useState<number>(
     () => versiculos?.[0]?.number ?? 1,
   );
+  const [favoritos, setFavoritos] = useState<Record<number, boolean>>(
+    Object.fromEntries(versiculos.map((v) => [v.id, v.isFavorite])),
+  );
+  const [carregando, setCarregando] = useState<Record<number, boolean>>({});
 
-  // filtra versículos por texto ou número
   const filtrados = useMemo(() => {
     const s = q.trim().toLowerCase();
     if (!s) return versiculos;
@@ -37,15 +48,36 @@ export default function CapituloClient({
     return versiculos.filter((v) => v.text.toLowerCase().includes(s));
   }, [q, versiculos]);
 
-  // ao carregar: destacar o primeiro versículo (ou o 1)
   useEffect(() => {
     const el = document.getElementById(`v-${ativo}`);
     el?.scrollIntoView({ behavior: "smooth", block: "center" });
   }, [ativo]);
 
+  async function toggleFavorito(verseId: number) {
+    try {
+      setCarregando((prev) => ({ ...prev, [verseId]: true }));
+
+      const res = await fetch("/api/favoritos/versiculos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ verseId }),
+      });
+
+      if (!res.ok) return;
+
+      const data = (await res.json()) as { isFavorite: boolean };
+
+      setFavoritos((prev) => ({
+        ...prev,
+        [verseId]: data.isFavorite,
+      }));
+    } finally {
+      setCarregando((prev) => ({ ...prev, [verseId]: false }));
+    }
+  }
+
   return (
     <div className={styles.container}>
-      {/* ✅ volta mantendo a versão */}
       <Link
         href={`/livros/${slug}?v=${version}#top`}
         className={styles.backLink}
@@ -92,18 +124,37 @@ export default function CapituloClient({
       </div>
 
       <ol className={styles.verses}>
-        {filtrados.map((v) => (
-          <li
-            key={v.number}
-            id={`v-${v.number}`}
-            className={`${styles.verseCard} ${
-              ativo === v.number ? styles.active : ""
-            }`}
-          >
-            <span className={styles.verseNumber}>{v.number}</span>
-            <span className={styles.verseText}>{v.text}</span>
-          </li>
-        ))}
+        {filtrados.map((v) => {
+          const isFavorite = Boolean(favoritos[v.id]);
+          const isLoading = Boolean(carregando[v.id]);
+
+          return (
+            <li
+              key={v.id}
+              id={`v-${v.number}`}
+              className={`${styles.verseCard} ${
+                ativo === v.number ? styles.active : ""
+              }`}
+            >
+              <div className={styles.verseTop}>
+                <div className={styles.verseMeta}>
+                  <span className={styles.verseNumber}>{v.number}</span>
+
+                  <button
+                    type="button"
+                    onClick={() => toggleFavorito(v.id)}
+                    disabled={isLoading}
+                    className={`${styles.favoriteBtn} ${isFavorite ? styles.favoriteBtnActive : ""}`}
+                  >
+                    {isLoading ? "..." : isFavorite ? "★" : "☆"}
+                  </button>
+                </div>
+              </div>
+
+              <span className={styles.verseText}>{v.text}</span>
+            </li>
+          );
+        })}
       </ol>
 
       {filtrados.length === 0 && (

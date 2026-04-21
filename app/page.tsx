@@ -1,12 +1,14 @@
+//app/page.tsx
+
 import Link from "next/link";
 import { prisma } from "../lib/prisma";
 import styles from "./styles.module.scss";
 
-type Version = "acf" | "ara" | "nvi";
+type Version = "acf" | "ara" | "nvi" | "kja";
 
 function normalizeVersion(v?: string): Version {
   const s = (v ?? "").toLowerCase();
-  if (s === "acf" || s === "ara" || s === "nvi") return s;
+  if (s === "acf" || s === "ara" || s === "nvi" || s === "kja") return s;
   return "acf";
 }
 
@@ -46,7 +48,6 @@ export default async function Home({
             versículos e a Harpa Cristã.
           </p>
 
-          {/* ✅ seletor de versão (sem client component, só links) */}
           <Link
             href="/?v=acf"
             className={`${styles.secondaryBtn} ${version === "acf" ? styles.activeBtn : ""}`}
@@ -71,6 +72,18 @@ export default async function Home({
             NVI
           </Link>
 
+          <Link
+            href="/?v=kja"
+            className={`${styles.secondaryBtn} ${version === "kja" ? styles.activeBtn : ""}`}
+            aria-current={version === "kja" ? "page" : undefined}
+          >
+            KJA
+          </Link>
+
+          <Link className={styles.secondaryBtn} href="/favoritos">
+            ⭐ Favoritos
+          </Link>
+
           <div className={styles.stats}>
             <div className={styles.stat}>
               <div className={styles.statLabel}>Livros bíblicos</div>
@@ -89,7 +102,6 @@ export default async function Home({
           </div>
 
           <div className={styles.actions}>
-            {/* ✅ passa a versão para /livros */}
             <Link className={styles.primaryBtn} href={`/livros?v=${version}`}>
               📖 Bíblia Sagrada →
             </Link>
@@ -98,7 +110,6 @@ export default async function Home({
               🎵 Harpa ({hymnsCount})
             </Link>
 
-            {/* ✅ passa a versão para o livro direto */}
             <Link
               className={styles.secondaryBtn}
               href={`/livros/apocalipse?v=${version}`}

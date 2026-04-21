@@ -1,10 +1,12 @@
+//app/components/LivrosClient.tsx
+
 "use client";
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import styles from "../livros/styles.module.scss";
 
-type Version = "acf" | "ara" | "nvi";
+type Version = "acf" | "ara" | "nvi" | "kja";
 
 type Livro = {
   id: number;
@@ -29,7 +31,6 @@ export default function LivrosClient({
 }) {
   const [q, setQ] = useState("");
 
-  // ✅ estabiliza a referência (para não mudar deps toda render)
   const livrosSafe = useMemo<Livro[]>(
     () => (Array.isArray(livros) ? livros : []),
     [livros],

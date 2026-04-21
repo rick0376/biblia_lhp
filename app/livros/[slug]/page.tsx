@@ -1,12 +1,14 @@
+//app/livros/[slug]/page.tsx
+
 import Link from "next/link";
 import { prisma } from "../../../lib/prisma";
 import CapitulosClient from "../../components/CapitulosClient";
 import styles from "./styles.module.scss";
 
-type Version = "acf" | "ara" | "nvi";
+type Version = "acf" | "ara" | "nvi" | "kja";
 
 function normalizeVersion(v?: string): Version {
-  if (v === "acf" || v === "ara" || v === "nvi") return v;
+  if (v === "acf" || v === "ara" || v === "nvi" || v === "kja") return v;
   return "acf";
 }
 
@@ -63,7 +65,6 @@ export default async function LivroPage({
 
   return (
     <main className={styles.container}>
-      {/* 🔙 voltar mantendo versão */}
       <Link
         href={`/livros?v=${version}`}
         className={styles.backLink}
@@ -73,7 +74,6 @@ export default async function LivroPage({
         <span className={styles.backText}>Voltar</span>
       </Link>
 
-      {/* ✅ HEADER QUE TINHA SUMIDO */}
       <div className={styles.headerRow}>
         <div>
           <h1 className={styles.title}>{livro.name}</h1>
@@ -85,7 +85,6 @@ export default async function LivroPage({
         </span>
       </div>
 
-      {/* ✅ client component só com lógica */}
       <CapitulosClient
         slug={livro.slug}
         chapters={chapters}

@@ -1,13 +1,15 @@
+//app/livros/page.tsx
+
 import Link from "next/link";
 import { prisma } from "../../lib/prisma";
 import styles from "./styles.module.scss";
 import LivrosClient from "../components/LivrosClient";
 
-type Version = "acf" | "ara" | "nvi";
+type Version = "acf" | "ara" | "nvi" | "kja";
 
 function normalizeVersion(v?: string): Version {
   const s = (v ?? "").toLowerCase();
-  if (s === "acf" || s === "ara" || s === "nvi") return s;
+  if (s === "acf" || s === "ara" || s === "nvi" || s === "kja") return s;
   return "acf";
 }
 
@@ -24,7 +26,6 @@ export default async function Livros({
     select: { id: true },
   });
 
-  // se ainda não existe no banco, não quebra a página
   if (!translation) {
     return (
       <main className={styles.container}>

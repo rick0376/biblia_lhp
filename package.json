@@ -6,7 +6,11 @@
     "dev": "next dev --webpack",
     "build": "prisma generate && next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed": "prisma db seed",
+    "seed:biblia": "tsx prisma/seed-biblia.ts",
+    "seed:kja": "tsx prisma/seed-biblia-kja.ts",
+    "seed:all": "npm run seed:biblia && npm run seed:kja"
   },
   "prisma": {
     "seed": "tsx prisma/seed-biblia.ts"

@@ -1,3 +1,5 @@
+//app/harpa/[numero]/page.tsx
+
 import Link from "next/link";
 import { prisma } from "../../../lib/prisma";
 import styles from "./styles.module.scss";
@@ -18,9 +20,12 @@ export default async function HinoPage({
   const hino = await prisma.hymn.findUnique({
     where: { number: n },
     select: {
+      id: true,
       number: true,
       title: true,
-
+      favorite: {
+        select: { id: true },
+      },
       verses: {
         orderBy: { position: "asc" },
         select: {
@@ -52,7 +57,14 @@ export default async function HinoPage({
         </div>
       </header>
 
-      <HinoClient verses={hino.verses} styles={styles} />
+      <HinoClient
+        hymnId={hino.id}
+        hymnNumber={hino.number}
+        hymnTitle={hino.title}
+        isFavorite={Boolean(hino.favorite)}
+        verses={hino.verses}
+        styles={styles}
+      />
     </main>
   );
 }

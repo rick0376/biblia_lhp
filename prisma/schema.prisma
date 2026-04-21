@@ -37,8 +37,8 @@ model Chapter {
 
 model Translation {
   id    Int    @id @default(autoincrement())
-  code  String @unique   // "acf", "ara", "nvi"
-  name  String           // "Almeida Corrigida Fiel"
+  code  String @unique // "acf", "ara", "nvi", "kja"
+  name  String
 
   verses Verse[]
 }
@@ -54,6 +54,8 @@ model Verse {
   translationId Int
   translation   Translation @relation(fields: [translationId], references: [id], onDelete: Cascade)
 
+  favorite      FavoriteVerse?
+
   @@unique([chapterId, number, translationId])
 }
 
@@ -62,14 +64,14 @@ model Verse {
 ========================= */
 
 model Hymn {
-  id      Int        @id @default(autoincrement())
-  number  Int        @unique
-  title   String
-  chorus  String?
-  verses  HymnVerse[]
+  id       Int         @id @default(autoincrement())
+  number   Int         @unique
+  title    String
+  chorus   String?
+  verses   HymnVerse[]
+  favorite FavoriteHymn?
 }
 
-/* Usar ENUM é melhor que string solta */
 enum HymnVerseType {
   VERSE
   CHORUS
@@ -88,4 +90,22 @@ model HymnVerse {
 
   @@unique([hymnId, number])
   @@index([hymnId, position])
+}
+
+/* =========================
+   FAVORITOS
+========================= */
+
+model FavoriteVerse {
+  id        Int      @id @default(autoincrement())
+  verseId    Int     @unique
+  verse      Verse   @relation(fields: [verseId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+}
+
+model FavoriteHymn {
+  id        Int      @id @default(autoincrement())
+  hymnId     Int     @unique
+  hymn       Hymn    @relation(fields: [hymnId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
 }

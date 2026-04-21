@@ -1,10 +1,12 @@
+//app/livros/[slug]/[capitulo]/page.tsx
+
 import { prisma } from "../../../../lib/prisma";
 import CapituloClient from "../../../components/CapituloClient";
 
-type Version = "acf" | "ara" | "nvi";
+type Version = "acf" | "ara" | "nvi" | "kja";
 
 function normalizeVersion(v?: string): Version {
-  if (v === "acf" || v === "ara" || v === "nvi") return v;
+  if (v === "acf" || v === "ara" || v === "nvi" || v === "kja") return v;
   return "acf";
 }
 
@@ -42,6 +44,11 @@ export default async function CapituloPage({
       verses: {
         where: { translationId: translation.id },
         orderBy: { number: "asc" },
+        include: {
+          favorite: {
+            select: { id: true },
+          },
+        },
       },
     },
   });
@@ -54,8 +61,10 @@ export default async function CapituloPage({
       livro={chapter.book.name}
       capitulo={chapter.number}
       versiculos={chapter.verses.map((vv) => ({
+        id: vv.id,
         number: vv.number,
         text: vv.text,
+        isFavorite: Boolean(vv.favorite),
       }))}
       version={version}
     />
