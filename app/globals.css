@@ -54,11 +54,14 @@
   --chorus-bg: rgba(245, 158, 11, 0.08);
   --chorus-border: rgba(245, 158, 11, 0.28);
   --chorus-text: rgba(253, 230, 138, 0.92);
+
+  --card-strong-text: #f3f4f6;
 }
 
 html[data-theme="light"] {
   --background: #f5efe2;
   --foreground: #2f2619;
+  --card-strong-text: #5c3a00;
 
   --page-background:
     radial-gradient(
