@@ -1,26 +1,10 @@
+//app/livros/[capitulo]/styles.module.scss
+
 .container {
   min-height: 100vh;
   padding: 20px;
-  //max-width: 1100px;
   margin: 0 auto;
-
-  background:
-    radial-gradient(
-      900px 520px at 15% 10%,
-      rgba(245, 158, 11, 0.14),
-      transparent 60%
-    ),
-    radial-gradient(
-      820px 460px at 80% 20%,
-      rgba(168, 85, 247, 0.1),
-      transparent 60%
-    ),
-    radial-gradient(
-      900px 550px at 50% 95%,
-      rgba(34, 197, 94, 0.08),
-      transparent 60%
-    ),
-    linear-gradient(180deg, #101827 0%, #0b1020 100%);
+  background: var(--page-background);
 }
 
 .headerRow {
@@ -37,8 +21,7 @@
   font-weight: 950;
   letter-spacing: -0.03em;
   margin: 0;
-
-  background: linear-gradient(90deg, #fde68a, #f59e0b, #fde68a);
+  background: var(--accent-gradient);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -50,27 +33,26 @@
   padding: 8px 12px;
   border-radius: 999px;
   font-size: 13px;
-  color: rgba(253, 230, 138, 0.9);
-  background: rgba(245, 158, 11, 0.1);
-  border: 1px solid rgba(245, 158, 11, 0.28);
+  color: var(--accent-text-soft);
+  background: var(--accent-soft-bg);
+  border: 1px solid var(--accent-soft-border);
 }
 
 .search {
   width: 100%;
   padding: 12px 14px;
   border-radius: 14px;
-  border: 1px solid rgba(245, 158, 11, 0.22);
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(229, 231, 235, 0.9);
+  border: 1px solid var(--field-border);
+  background: var(--field-bg);
+  color: var(--text-primary);
   outline: none;
   margin: 10px 0 14px;
 }
 
 .search::placeholder {
-  color: rgba(229, 231, 235, 0.45);
+  color: var(--text-muted);
 }
 
-/* Navegação de versículos (pílulas) */
 .verseNav {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(54px, 1fr));
@@ -82,16 +64,13 @@
   padding: 10px 8px;
   border-radius: 14px;
   cursor: pointer;
-
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: rgba(229, 231, 235, 0.85);
+  background: var(--surface-1);
+  border: 1px solid var(--surface-border);
+  color: var(--text-primary);
   font-weight: 750;
-
   box-shadow:
     0 18px 60px rgba(0, 0, 0, 0.25),
     0 1px 0 rgba(255, 255, 255, 0.04) inset;
-
   transition:
     transform 0.15s ease,
     border-color 0.15s ease,
@@ -100,18 +79,16 @@
 
 .verseBtn:hover {
   transform: translateY(-1px);
-  border-color: rgba(245, 158, 11, 0.3);
-  background: rgba(245, 158, 11, 0.08);
+  border-color: var(--accent-hover-border);
+  background: var(--accent-hover-bg);
 }
 
-/* Botão ativo (dourado) */
 .activeBtn {
-  color: #1b1302;
-  background: linear-gradient(90deg, #fde68a, #f59e0b, #fde68a);
+  color: var(--accent-strong-text);
+  background: var(--accent-gradient);
   border-color: rgba(250, 204, 21, 0.35);
 }
 
-/* Lista dos versículos */
 .verses {
   list-style: none;
   padding: 0;
@@ -126,13 +103,9 @@
   display: flex;
   gap: 12px;
   align-items: flex-start;
-
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow:
-    0 18px 60px rgba(0, 0, 0, 0.35),
-    0 1px 0 rgba(255, 255, 255, 0.05) inset;
-
+  background: var(--surface-1);
+  border: 1px solid var(--surface-border);
+  box-shadow: var(--shadow-elevated);
   transition:
     transform 0.12s ease,
     border-color 0.12s ease,
@@ -141,8 +114,8 @@
 
 .verseCard:hover {
   transform: translateY(-1px);
-  border-color: rgba(245, 158, 11, 0.25);
-  background: rgba(245, 158, 11, 0.06);
+  border-color: var(--accent-hover-border);
+  background: var(--accent-hover-bg);
 }
 
 .verseNumber {
@@ -152,19 +125,17 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   font-weight: 900;
-  color: rgba(253, 230, 138, 0.92);
-  background: rgba(245, 158, 11, 0.1);
+  color: var(--accent-text);
+  background: var(--accent-soft-bg);
   border: 1px solid rgba(245, 158, 11, 0.2);
 }
 
 .verseText {
-  color: rgba(243, 244, 246, 0.92);
+  color: var(--text-primary);
   line-height: 1.55;
 }
 
-/* Card ativo (destaque) */
 .active {
   border-color: rgba(250, 204, 21, 0.35);
   background:
@@ -173,19 +144,19 @@
       rgba(245, 158, 11, 0.14),
       transparent 55%
     ),
-    rgba(255, 255, 255, 0.06);
+    var(--surface-1);
 }
 
 .active .verseNumber {
-  color: #1b1302;
-  background: linear-gradient(90deg, #fde68a, #f59e0b, #fde68a);
+  color: var(--accent-strong-text);
+  background: var(--accent-gradient);
   border-color: rgba(250, 204, 21, 0.35);
 }
 
 .empty {
   margin-top: 14px;
   text-align: center;
-  color: rgba(229, 231, 235, 0.6);
+  color: var(--text-muted);
 }
 
 .backLink {
@@ -202,18 +173,16 @@
   border-radius: 14px;
   display: grid;
   place-items: center;
-
-  color: #1b1302;
-  background: linear-gradient(90deg, #fde68a, #f59e0b, #fde68a);
+  color: var(--accent-strong-text);
+  background: var(--accent-gradient);
   border: 1px solid rgba(250, 204, 21, 0.35);
   box-shadow: 0 12px 28px rgba(245, 158, 11, 0.18);
-
   transition: transform 0.15s ease;
 }
 
 .backText {
   font-weight: 850;
-  color: rgba(253, 230, 138, 0.92);
+  color: var(--accent-text);
 }
 
 .backLink:hover .backIcon {
@@ -232,8 +201,8 @@
 
 .favoriteBtn {
   border: 1px solid rgba(245, 189, 64, 0.35);
-  background: rgba(255, 255, 255, 0.04);
-  color: #f6d36a;
+  background: var(--surface-2);
+  color: var(--accent-text);
   border-radius: 999px;
   padding: 6px 10px;
   min-width: 44px;
@@ -243,7 +212,7 @@
 }
 
 .favoriteBtnActive {
-  background: linear-gradient(135deg, #f6e27a, #f0b90b);
+  background: var(--accent-gradient-2);
   color: #1b1b1b;
 }
 

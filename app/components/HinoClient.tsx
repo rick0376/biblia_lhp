@@ -62,8 +62,8 @@ export default function HinoClient({
       >
         <div
           style={{
-            color: "rgba(255,255,255,0.75)",
-            fontWeight: 600,
+            color: "var(--text-secondary)",
+            fontWeight: 700,
           }}
         >
           Hino {hymnNumber} • {hymnTitle}
@@ -74,11 +74,13 @@ export default function HinoClient({
           onClick={toggleFavorito}
           disabled={carregando}
           style={{
-            border: "1px solid rgba(245, 189, 64, 0.35)",
+            border: "1px solid var(--accent-soft-border)",
             background: favorito
-              ? "linear-gradient(135deg, #f6e27a, #f0b90b)"
-              : "rgba(255,255,255,0.04)",
-            color: favorito ? "#1b1b1b" : "#f6d36a",
+              ? "var(--accent-gradient-2)"
+              : "var(--surface-2)",
+            color: favorito
+              ? "var(--accent-strong-text)"
+              : "var(--accent-text)",
             borderRadius: "999px",
             padding: "8px 14px",
             cursor: "pointer",

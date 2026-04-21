@@ -1,26 +1,11 @@
+//app/styles.module.scss
+
 .container {
   min-height: 100vh;
   padding: 20px;
   display: grid;
   place-items: center;
-
-  background:
-    radial-gradient(
-      900px 520px at 15% 10%,
-      rgba(245, 158, 11, 0.14),
-      transparent 60%
-    ),
-    radial-gradient(
-      820px 460px at 80% 20%,
-      rgba(168, 85, 247, 0.1),
-      transparent 60%
-    ),
-    radial-gradient(
-      900px 550px at 50% 95%,
-      rgba(34, 197, 94, 0.08),
-      transparent 60%
-    ),
-    linear-gradient(180deg, #101827 0%, #0b1020 100%);
+  background: var(--page-background);
 }
 
 .card {
@@ -29,14 +14,10 @@
   border-radius: 22px;
   padding: 18px;
   position: relative;
-
-  /* moldura */
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--surface-border-soft);
   box-shadow:
     0 25px 80px rgba(0, 0, 0, 0.55),
     0 1px 0 rgba(255, 255, 255, 0.06) inset;
-
-  /* “papel” por dentro */
   background:
     radial-gradient(
       1200px 600px at 30% 20%,
@@ -48,11 +29,7 @@
       rgba(255, 255, 255, 0.06),
       transparent 60%
     ),
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.09),
-      rgba(255, 255, 255, 0.05)
-    );
+    linear-gradient(180deg, var(--surface-3), var(--surface-2));
   backdrop-filter: blur(10px);
 }
 
@@ -60,8 +37,6 @@
   border-radius: 18px;
   padding: 22px;
   position: relative;
-
-  /* textura leve de pergaminho (sem imagem) */
   background:
     radial-gradient(
       1200px 800px at 20% 10%,
@@ -74,7 +49,7 @@
       transparent 60%
     ),
     linear-gradient(180deg, rgba(17, 24, 39, 0.18), rgba(17, 24, 39, 0.12));
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--surface-border-soft);
 }
 
 .headerRow {
@@ -93,10 +68,9 @@
   padding: 8px 12px;
   border-radius: 999px;
   font-size: 13px;
-  color: rgba(253, 230, 138, 0.9);
-
-  background: rgba(245, 158, 11, 0.1);
-  border: 1px solid rgba(245, 158, 11, 0.28);
+  color: var(--accent-text-soft);
+  background: var(--accent-soft-bg);
+  border: 1px solid var(--accent-soft-border);
 }
 
 .ornament {
@@ -119,27 +93,24 @@
   letter-spacing: -0.03em;
   line-height: 1.02;
   margin: 6px 0 10px;
-
-  /* dourado */
-  background: linear-gradient(90deg, #fde68a, #f59e0b, #fde68a);
+  background: var(--accent-gradient);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-
   text-shadow: 0 10px 30px rgba(245, 158, 11, 0.18);
 }
 
 .subtitle {
   font-size: 16px;
   line-height: 1.6;
-  color: rgba(243, 244, 246, 0.88);
+  color: var(--text-primary);
   max-width: 70ch;
   margin-bottom: 18px;
 }
 
 .activeBtn {
-  color: #1b1302;
-  background: linear-gradient(90deg, #fde68a, #f59e0b, #fde68a);
+  color: var(--accent-strong-text);
+  background: var(--accent-gradient);
   border: 1px solid rgba(250, 204, 21, 0.35);
   box-shadow: 0 12px 35px rgba(245, 158, 11, 0.22);
 }
@@ -155,8 +126,8 @@
   grid-column: span 12;
   border-radius: 16px;
   padding: 14px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--surface-1);
+  border: 1px solid var(--surface-border-soft);
 }
 
 @media (min-width: 720px) {
@@ -169,14 +140,14 @@
   font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(243, 244, 246, 0.68);
+  color: var(--text-secondary);
   margin-bottom: 6px;
 }
 
 .statValue {
   font-size: 28px;
   font-weight: 850;
-  color: rgba(255, 255, 255, 0.92);
+  color: var(--text-primary);
 }
 
 .actions {
@@ -191,18 +162,14 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-
   padding: 12px 16px;
   border-radius: 14px;
   text-decoration: none;
   font-weight: 850;
-  color: #1b1302;
-
-  /* botão dourado */
-  background: linear-gradient(90deg, #fde68a, #f59e0b, #fde68a);
+  color: var(--accent-strong-text);
+  background: var(--accent-gradient);
   border: 1px solid rgba(250, 204, 21, 0.35);
   box-shadow: 0 12px 35px rgba(245, 158, 11, 0.22);
-
   transition:
     transform 0.15s ease,
     filter 0.15s ease;
@@ -222,11 +189,9 @@
   border-radius: 14px;
   text-decoration: none;
   font-weight: 750;
-
-  color: rgba(253, 230, 138, 0.92);
-  background: rgba(245, 158, 11, 0.08);
-  border: 1px solid rgba(245, 158, 11, 0.22);
-
+  color: var(--accent-text);
+  background: var(--accent-soft-bg);
+  border: 1px solid var(--accent-soft-border-2);
   transition:
     transform 0.15s ease,
     border-color 0.15s ease;
@@ -234,13 +199,12 @@
 
 .secondaryBtn:hover {
   transform: translateY(-2px);
-  border-color: rgba(253, 230, 138, 0.38);
+  border-color: var(--accent-hover-border);
 }
 
-/* botão de versão ativo */
 .secondaryBtn[aria-current="page"] {
-  color: #1b1302;
-  background: linear-gradient(90deg, #fde68a, #f59e0b, #fde68a);
+  color: var(--accent-strong-text);
+  background: var(--accent-gradient);
   border: 1px solid rgba(250, 204, 21, 0.35);
   box-shadow: 0 12px 35px rgba(245, 158, 11, 0.22);
 }
@@ -248,10 +212,9 @@
 .footerHint {
   margin-top: 14px;
   font-size: 13px;
-  color: rgba(229, 231, 235, 0.55);
+  color: var(--text-muted);
 }
 
-/* cantos “ornamentais” discretos */
 .corner {
   position: absolute;
   width: 20px;
@@ -266,18 +229,21 @@
   border-right: 0;
   border-bottom: 0;
 }
+
 .cornerTR {
   top: 10px;
   right: 10px;
   border-left: 0;
   border-bottom: 0;
 }
+
 .cornerBL {
   bottom: 10px;
   left: 10px;
   border-right: 0;
   border-top: 0;
 }
+
 .cornerBR {
   bottom: 10px;
   right: 10px;
