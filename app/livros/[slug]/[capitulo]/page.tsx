@@ -48,6 +48,11 @@ export default async function CapituloPage({
           favorite: {
             select: { id: true },
           },
+          note: {
+            select: {
+              content: true,
+            },
+          },
         },
       },
     },
@@ -65,6 +70,7 @@ export default async function CapituloPage({
         number: vv.number,
         text: vv.text,
         isFavorite: Boolean(vv.favorite),
+        noteContent: vv.note?.content ?? null,
       }))}
       version={version}
     />

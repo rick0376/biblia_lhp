@@ -84,6 +84,10 @@ export default async function Home({
             ⭐ Favoritos
           </Link>
 
+          <Link className={styles.secondaryBtn} href="/marcacoes">
+            🖍 Marcações
+          </Link>
+
           <div className={styles.stats}>
             <div className={styles.stat}>
               <div className={styles.statLabel}>Livros bíblicos</div>
