@@ -1,6 +1,7 @@
 //app/livros/[slug]/[capitulo]/page.tsx
 
 import { prisma } from "../../../../lib/prisma";
+import { getVisitorId } from "../../../../lib/visitor";
 import CapituloClient from "../../../components/CapituloClient";
 
 type Version = "acf" | "ara" | "nvi" | "kja";
@@ -20,6 +21,7 @@ export default async function CapituloPage({
   const { slug, capitulo } = await params;
   const { v } = (await searchParams) ?? {};
   const version = normalizeVersion(v);
+  const visitorId = await getVisitorId();
 
   const numeroCapitulo = Number(capitulo);
   if (!Number.isFinite(numeroCapitulo) || numeroCapitulo <= 0) {
@@ -45,14 +47,20 @@ export default async function CapituloPage({
         where: { translationId: translation.id },
         orderBy: { number: "asc" },
         include: {
-          favorite: {
-            select: { id: true },
-          },
-          note: {
-            select: {
-              content: true,
-            },
-          },
+          favorites: visitorId
+            ? {
+                where: { visitorId },
+                select: { id: true },
+                take: 1,
+              }
+            : false,
+          notes: visitorId
+            ? {
+                where: { visitorId },
+                select: { content: true },
+                take: 1,
+              }
+            : false,
         },
       },
     },
@@ -69,8 +77,13 @@ export default async function CapituloPage({
         id: vv.id,
         number: vv.number,
         text: vv.text,
-        isFavorite: Boolean(vv.favorite),
-        noteContent: vv.note?.content ?? null,
+        isFavorite: Array.isArray(vv.favorites)
+          ? vv.favorites.length > 0
+          : false,
+        noteContent:
+          Array.isArray(vv.notes) && vv.notes.length > 0
+            ? vv.notes[0].content
+            : null,
       }))}
       version={version}
     />

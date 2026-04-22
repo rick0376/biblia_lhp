@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { prisma } from "../../../lib/prisma";
+import { getVisitorId } from "../../../lib/visitor";
 import styles from "./styles.module.scss";
 import HinoClient from "../../components/HinoClient";
 
@@ -12,6 +13,7 @@ export default async function HinoPage({
 }) {
   const { numero } = await params;
   const n = Number(numero);
+  const visitorId = await getVisitorId();
 
   if (!Number.isFinite(n) || n <= 0) {
     return <h1>Hino inválido</h1>;
@@ -23,9 +25,13 @@ export default async function HinoPage({
       id: true,
       number: true,
       title: true,
-      favorite: {
-        select: { id: true },
-      },
+      favorites: visitorId
+        ? {
+            where: { visitorId },
+            select: { id: true },
+            take: 1,
+          }
+        : false,
       verses: {
         orderBy: { position: "asc" },
         select: {
@@ -61,7 +67,9 @@ export default async function HinoPage({
         hymnId={hino.id}
         hymnNumber={hino.number}
         hymnTitle={hino.title}
-        isFavorite={Boolean(hino.favorite)}
+        isFavorite={
+          Array.isArray(hino.favorites) ? hino.favorites.length > 0 : false
+        }
         verses={hino.verses}
         styles={styles}
       />

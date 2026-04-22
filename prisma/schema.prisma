@@ -54,8 +54,8 @@ model Verse {
   translationId Int
   translation   Translation @relation(fields: [translationId], references: [id], onDelete: Cascade)
 
-  favorite      FavoriteVerse?
-  note          VerseNote?
+  favorites     FavoriteVerse[]
+  notes         VerseNote[]
 
   @@unique([chapterId, number, translationId])
 }
@@ -65,12 +65,12 @@ model Verse {
 ========================= */
 
 model Hymn {
-  id       Int         @id @default(autoincrement())
-  number   Int         @unique
-  title    String
-  chorus   String?
-  verses   HymnVerse[]
-  favorite FavoriteHymn?
+  id        Int            @id @default(autoincrement())
+  number    Int            @unique
+  title     String
+  chorus    String?
+  verses    HymnVerse[]
+  favorites FavoriteHymn[]
 }
 
 enum HymnVerseType {
@@ -99,16 +99,24 @@ model HymnVerse {
 
 model FavoriteVerse {
   id        Int      @id @default(autoincrement())
-  verseId   Int      @unique
+  visitorId String   @default("")
+  verseId   Int
   verse     Verse    @relation(fields: [verseId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+
+  @@unique([visitorId, verseId])
+  @@index([visitorId])
 }
 
 model FavoriteHymn {
   id        Int      @id @default(autoincrement())
-  hymnId    Int      @unique
+  visitorId String   @default("")
+  hymnId    Int
   hymn      Hymn     @relation(fields: [hymnId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+
+  @@unique([visitorId, hymnId])
+  @@index([visitorId])
 }
 
 /* =========================
@@ -117,10 +125,14 @@ model FavoriteHymn {
 
 model VerseNote {
   id        Int      @id @default(autoincrement())
-  verseId   Int      @unique
+  visitorId String   @default("")
+  verseId   Int
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   verse     Verse    @relation(fields: [verseId], references: [id], onDelete: Cascade)
+
+  @@unique([visitorId, verseId])
+  @@index([visitorId])
 }

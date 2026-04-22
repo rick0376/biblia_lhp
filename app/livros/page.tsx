@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { prisma } from "../../lib/prisma";
+import { getVisitorId } from "../../lib/visitor";
 import styles from "./styles.module.scss";
 import LivrosClient from "../components/LivrosClient";
 
@@ -20,6 +21,7 @@ export default async function Livros({
 }) {
   const { v } = (await searchParams) ?? {};
   const version = normalizeVersion(v);
+  const visitorId = await getVisitorId();
 
   const translation = await prisma.translation.findUnique({
     where: { code: version },
@@ -63,18 +65,24 @@ export default async function Livros({
           },
         },
       },
-      chapters: {
-        where: {
-          verses: {
-            some: {
-              translationId: translation.id,
-              note: { isNot: null },
+      chapters: visitorId
+        ? {
+            where: {
+              verses: {
+                some: {
+                  translationId: translation.id,
+                  notes: {
+                    some: {
+                      visitorId,
+                    },
+                  },
+                },
+              },
             },
-          },
-        },
-        select: { id: true },
-        take: 1,
-      },
+            select: { id: true },
+            take: 1,
+          }
+        : false,
     },
     orderBy: { order: "asc" },
   });
@@ -85,7 +93,7 @@ export default async function Livros({
     slug: l.slug,
     testament: l.testament,
     chaptersCount: l._count.chapters,
-    hasNotes: l.chapters.length > 0,
+    hasNotes: Array.isArray(l.chapters) ? l.chapters.length > 0 : false,
   }));
 
   return (

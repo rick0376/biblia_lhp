@@ -2,9 +2,19 @@
 
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
+import { getVisitorId } from "../../../../lib/visitor";
 
 export async function POST(req: Request) {
   try {
+    const visitorId = await getVisitorId();
+
+    if (!visitorId) {
+      return NextResponse.json(
+        { error: "visitor_id não encontrado" },
+        { status: 400 },
+      );
+    }
+
     const body = (await req.json()) as {
       verseId?: number;
       content?: string;
@@ -19,30 +29,37 @@ export async function POST(req: Request) {
 
     if (content.length === 0) {
       await prisma.verseNote.deleteMany({
-        where: { verseId },
+        where: {
+          visitorId,
+          verseId,
+        },
       });
 
       return NextResponse.json({ noteContent: null });
     }
 
     const note = await prisma.verseNote.upsert({
-      where: { verseId },
+      where: {
+        visitorId_verseId: {
+          visitorId,
+          verseId,
+        },
+      },
       update: { content },
-      create: { verseId, content },
+      create: {
+        visitorId,
+        verseId,
+        content,
+      },
       select: { content: true },
     });
 
     return NextResponse.json({ noteContent: note.content });
   } catch (error) {
-    console.error("Erro real da anotação:", error);
+    console.error("Erro anotação versículo:", error);
 
     return NextResponse.json(
-      {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Erro ao salvar anotação do versículo",
-      },
+      { error: "Erro ao salvar anotação do versículo" },
       { status: 500 },
     );
   }

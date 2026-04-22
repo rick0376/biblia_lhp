@@ -2,9 +2,19 @@
 
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
+import { getVisitorId } from "../../../../lib/visitor";
 
 export async function POST(req: Request) {
   try {
+    const visitorId = await getVisitorId();
+
+    if (!visitorId) {
+      return NextResponse.json(
+        { error: "visitor_id não encontrado" },
+        { status: 400 },
+      );
+    }
+
     const body = (await req.json()) as { hymnId?: number };
     const hymnId = Number(body.hymnId);
 
@@ -13,24 +23,39 @@ export async function POST(req: Request) {
     }
 
     const existing = await prisma.favoriteHymn.findUnique({
-      where: { hymnId },
+      where: {
+        visitorId_hymnId: {
+          visitorId,
+          hymnId,
+        },
+      },
       select: { id: true },
     });
 
     if (existing) {
       await prisma.favoriteHymn.delete({
-        where: { hymnId },
+        where: {
+          visitorId_hymnId: {
+            visitorId,
+            hymnId,
+          },
+        },
       });
 
       return NextResponse.json({ isFavorite: false });
     }
 
     await prisma.favoriteHymn.create({
-      data: { hymnId },
+      data: {
+        visitorId,
+        hymnId,
+      },
     });
 
     return NextResponse.json({ isFavorite: true });
-  } catch {
+  } catch (error) {
+    console.error("Erro favorito hino:", error);
+
     return NextResponse.json(
       { error: "Erro ao alternar favorito do hino" },
       { status: 500 },

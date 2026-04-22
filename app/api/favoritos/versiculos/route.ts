@@ -2,9 +2,19 @@
 
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
+import { getVisitorId } from "../../../../lib/visitor";
 
 export async function POST(req: Request) {
   try {
+    const visitorId = await getVisitorId();
+
+    if (!visitorId) {
+      return NextResponse.json(
+        { error: "visitor_id não encontrado" },
+        { status: 400 },
+      );
+    }
+
     const body = (await req.json()) as { verseId?: number };
     const verseId = Number(body.verseId);
 
@@ -13,24 +23,39 @@ export async function POST(req: Request) {
     }
 
     const existing = await prisma.favoriteVerse.findUnique({
-      where: { verseId },
+      where: {
+        visitorId_verseId: {
+          visitorId,
+          verseId,
+        },
+      },
       select: { id: true },
     });
 
     if (existing) {
       await prisma.favoriteVerse.delete({
-        where: { verseId },
+        where: {
+          visitorId_verseId: {
+            visitorId,
+            verseId,
+          },
+        },
       });
 
       return NextResponse.json({ isFavorite: false });
     }
 
     await prisma.favoriteVerse.create({
-      data: { verseId },
+      data: {
+        visitorId,
+        verseId,
+      },
     });
 
     return NextResponse.json({ isFavorite: true });
-  } catch {
+  } catch (error) {
+    console.error("Erro favorito versículo:", error);
+
     return NextResponse.json(
       { error: "Erro ao alternar favorito do versículo" },
       { status: 500 },

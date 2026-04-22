@@ -2,12 +2,47 @@
 
 import Link from "next/link";
 import { prisma } from "../../lib/prisma";
+import { getVisitorId } from "../../lib/visitor";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function AnotacoesPage() {
+  const visitorId = await getVisitorId();
+
+  if (!visitorId) {
+    return (
+      <main
+        style={{
+          minHeight: "100vh",
+          padding: "32px 20px",
+          background: "var(--page-background)",
+          color: "var(--text-primary)",
+        }}
+      >
+        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+          <Link
+            href="/"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              marginBottom: 20,
+              color: "var(--accent-text)",
+              textDecoration: "none",
+              fontWeight: 700,
+            }}
+          >
+            ← Voltar
+          </Link>
+          <p>Nenhum identificador local encontrado.</p>
+        </div>
+      </main>
+    );
+  }
+
   const anotacoes = await prisma.verseNote.findMany({
+    where: { visitorId },
     orderBy: { updatedAt: "desc" },
     include: {
       verse: {
@@ -32,12 +67,7 @@ export default async function AnotacoesPage() {
         color: "var(--text-primary)",
       }}
     >
-      <div
-        style={{
-          maxWidth: 1100,
-          margin: "0 auto",
-        }}
-      >
+      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
         <Link
           href="/"
           style={{
@@ -66,13 +96,8 @@ export default async function AnotacoesPage() {
           Anotações
         </h1>
 
-        <p
-          style={{
-            color: "var(--text-secondary)",
-            marginBottom: 28,
-          }}
-        >
-          Seus versículos anotados.
+        <p style={{ color: "var(--text-secondary)", marginBottom: 28 }}>
+          Seus versículos anotados neste navegador.
         </p>
 
         {anotacoes.length === 0 ? (
@@ -80,12 +105,7 @@ export default async function AnotacoesPage() {
             Nenhuma anotação ainda.
           </p>
         ) : (
-          <div
-            style={{
-              display: "grid",
-              gap: 14,
-            }}
-          >
+          <div style={{ display: "grid", gap: 14 }}>
             {anotacoes.map((item) => {
               const verse = item.verse;
               const chapter = verse.chapter;
@@ -116,12 +136,7 @@ export default async function AnotacoesPage() {
                     {verse.translation.code.toUpperCase()}
                   </div>
 
-                  <div
-                    style={{
-                      marginBottom: 14,
-                      lineHeight: 1.7,
-                    }}
-                  >
+                  <div style={{ marginBottom: 14, lineHeight: 1.7 }}>
                     {verse.text}
                   </div>
 
