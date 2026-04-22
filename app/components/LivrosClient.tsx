@@ -14,6 +14,7 @@ type Livro = {
   slug: string;
   testament: string;
   chaptersCount: number;
+  hasNotes: boolean;
 };
 
 function normalizarTestamento(t: string) {
@@ -80,7 +81,20 @@ export default function LivrosClient({
                 href={`/livros/${l.slug}?v=${version}`}
                 className={styles.card}
               >
-                <div className={styles.cardTitle}>{l.name}</div>
+                <div
+                  className={styles.cardTitle}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 8,
+                  }}
+                >
+                  <span>{l.name}</span>
+                  {l.hasNotes && (
+                    <span title="Este livro tem anotações">📝</span>
+                  )}
+                </div>
                 <div className={styles.count}>{l.chaptersCount} capítulos</div>
               </Link>
             ))}
@@ -102,7 +116,20 @@ export default function LivrosClient({
                 href={`/livros/${l.slug}?v=${version}`}
                 className={styles.card}
               >
-                <div className={styles.cardTitle}>{l.name}</div>
+                <div
+                  className={styles.cardTitle}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 8,
+                  }}
+                >
+                  <span>{l.name}</span>
+                  {l.hasNotes && (
+                    <span title="Este livro tem anotações">📝</span>
+                  )}
+                </div>
                 <div className={styles.count}>{l.chaptersCount} capítulos</div>
               </Link>
             ))}

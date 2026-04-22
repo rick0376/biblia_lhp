@@ -12,6 +12,7 @@ type ChapterItem = {
   id: number;
   number: number;
   versesCount: number;
+  hasNotes: boolean;
 };
 
 export default function CapitulosClient({
@@ -53,7 +54,20 @@ export default function CapitulosClient({
             href={`/livros/${slug}/${c.number}?v=${version}#v-${c.number}`}
             className={styles.card}
           >
-            <div className={styles.cardTitle}>Capítulo {c.number}</div>
+            <div
+              className={styles.cardTitle}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+              }}
+            >
+              <span>Capítulo {c.number}</span>
+              {c.hasNotes && (
+                <span title="Este capítulo tem anotações">📝</span>
+              )}
+            </div>
             <div className={styles.count}>{c.versesCount} versículos</div>
           </Link>
         ))}

@@ -63,6 +63,18 @@ export default async function Livros({
           },
         },
       },
+      chapters: {
+        where: {
+          verses: {
+            some: {
+              translationId: translation.id,
+              note: { isNot: null },
+            },
+          },
+        },
+        select: { id: true },
+        take: 1,
+      },
     },
     orderBy: { order: "asc" },
   });
@@ -73,6 +85,7 @@ export default async function Livros({
     slug: l.slug,
     testament: l.testament,
     chaptersCount: l._count.chapters,
+    hasNotes: l.chapters.length > 0,
   }));
 
   return (

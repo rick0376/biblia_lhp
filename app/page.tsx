@@ -84,8 +84,8 @@ export default async function Home({
             ⭐ Favoritos
           </Link>
 
-          <Link className={styles.secondaryBtn} href="/marcacoes">
-            🖍 Marcações
+          <Link className={styles.secondaryBtn} href="/anotacoes">
+            📝 Anotações
           </Link>
 
           <div className={styles.stats}>
@@ -123,7 +123,7 @@ export default async function Home({
           </div>
 
           <div className={styles.footerHint}>
-            Dica: depois podemos adicionar favoritos, marcações e modo noturno.
+            Dica: depois podemos adicionar favoritos, anotações e modo noturno.
           </div>
         </div>
       </section>

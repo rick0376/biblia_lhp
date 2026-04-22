@@ -49,6 +49,14 @@ export default async function LivroPage({
               },
             },
           },
+          verses: {
+            where: {
+              translationId: translation.id,
+              note: { isNot: null },
+            },
+            select: { id: true },
+            take: 1,
+          },
         },
         orderBy: { number: "asc" },
       },
@@ -61,6 +69,7 @@ export default async function LivroPage({
     id: c.id,
     number: c.number,
     versesCount: c._count.verses,
+    hasNotes: c.verses.length > 0,
   }));
 
   return (
